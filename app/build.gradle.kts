@@ -37,3 +37,12 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
+dependencies {
+    val fragment_version = "1.6.2"
+    implementation("androidx.fragment:fragment:$fragment_version")
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
+}
+dependencies {
+    val activity_version = "1.8.2"
+    implementation("androidx.activity:activity:$activity_version")
+}
