@@ -1,5 +1,10 @@
 package com.example.myapplication;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.util.Date;
 
-public class Note {
+public class Note implements Parcelable {
     private String titre;
     private String texte;
     private Date dateDerniereModif;
@@ -33,6 +38,23 @@ public class Note {
 
         this.texte= Files.readAllLines(path).toString();
     }
+
+    protected Note(Parcel in) {
+        titre = in.readString();
+        texte = in.readString();
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
     public Date getDateDeCreation() {
         return dateDeCreation;
@@ -66,4 +88,16 @@ public class Note {
         this.titre = titre;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(titre);
+        dest.writeString(texte);
+        dest.writeString(dateDeCreation.toString());
+        dest.writeString(dateDerniereModif.toString());
+    }
 }
