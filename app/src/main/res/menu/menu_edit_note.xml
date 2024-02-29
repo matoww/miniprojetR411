@@ -2,9 +2,9 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/supp"
         android:title="@string/supprimer"
-        android:onClick="supprimerToutesLesNotes"/>
-    <item android:title="@string/cr_er"
-        android:onClick="menucreer"/>
+        android:onClick="onSupprimerNoteMenuItemClick"/>
+
 
 </menu>

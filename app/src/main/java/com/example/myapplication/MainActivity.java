@@ -149,4 +149,22 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("note", note);
         startActivity(intent);
     }
+
+
+    public void supprimerToutesLesNotes(MenuItem item) {
+        File notesDirectory = new File(this.getFilesDir().getAbsolutePath() + "/note/");
+        if (notesDirectory.exists() && notesDirectory.isDirectory()) {
+            File[] files = notesDirectory.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.delete()) {
+                        System.out.println("Note supprimée avec succès: " + file.getName());
+                    } else {
+                        System.out.println("Erreur lors de la suppression de la note: " + file.getName());
+                    }
+                }
+            }
+        }
+    }
 }
