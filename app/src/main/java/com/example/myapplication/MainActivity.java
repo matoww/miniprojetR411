@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -113,27 +114,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setMenuSupprimer(){
-        RecyclerView recyclerView=findViewById(R.id.recyclerView);
-        for (int i=0;i<recyclerView.getChildCount();i++){
-            RecyclerView.ViewHolder viewHolder=recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
-            View view=viewHolder.itemView;
-            View textView=view.findViewById(R.id.textViewItem);
-        }
+
     }
 
     public void menucreer(MenuItem menuItem){
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_create_layout, null);
-
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // Permet à la PopupWindow de recevoir les touches en dehors d'elle-même pour la fermer
+        boolean focusable = true;
         popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // Récupérer la racine de la vue actuelle pour l'affichage de la PopupWindow
         View rootView = getWindow().getDecorView().getRootView();
-
-        // Afficher la fenêtre contextuelle au rootView
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
 
     }
@@ -141,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public void Creer(View view) throws IOException {
         EditText textInputEditText = popupWindow.getContentView().findViewById(R.id.titreDocInput);
         textInputEditText.requestFocus();
-        System.out.println(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString()+".txt");
-        File file = new File(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString()+".txt");
+        File file = new File(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString());
         if(file.createNewFile()){
             System.out.println("ça marche ");
         } else {
@@ -152,22 +142,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("note", new Note(file));
         startActivity(intent);
     }
-
-
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void supprimerNote(ArrayList<Note> notes){
-        for (Note note:notes ){
-            File file=new File(this.getFilesDir().getAbsolutePath()+"/note/"+note.getTitre()+"txt");
-            if(file.delete()){
-            }else{
-                Toast.makeText(this,"il y a eu une erreur lors de la suppression des fichiers",Toast.LENGTH_LONG).show();
-                break;
-            }
-        }
-        afficherLstNotes(new File(this.getFilesDir().getAbsolutePath() + "/note"));
-        adapter.notifyDataSetChanged();
+    public void lancer(View view) throws IOException {
+        Button button=(Button) view;
+        Note note=new Note(new File(this.getFilesDir().getAbsolutePath()+"/note/"+button.getText()));
+        Intent intent = new Intent(this, EditNote.class);
+        intent.putExtra("note", note);
+        startActivity(intent);
     }
-
-
 }
