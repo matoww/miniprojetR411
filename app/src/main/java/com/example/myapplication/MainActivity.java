@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ import java.lang.reflect.Array;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.Manifest;
 
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private String[] data;
     RecyclerViewAdapter adapter;
+    PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             strings.add(tittle.getName());
         }
         data=strings.toArray(new String[0]);
+        System.out.println(Arrays.toString(data));
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,22 +122,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void menucreer(MenuItem menuItem){
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.popup_create_layout);
-        dialog.show();
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_create_layout, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // Permet à la PopupWindow de recevoir les touches en dehors d'elle-même pour la fermer
+        popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // Récupérer la racine de la vue actuelle pour l'affichage de la PopupWindow
+        View rootView = getWindow().getDecorView().getRootView();
+
+        // Afficher la fenêtre contextuelle au rootView
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+
     }
 
-    public void Creer (View view) throws IOException {
-        View popupView =LayoutInflater.from(this).inflate(R.layout.popup_create_layout,null);
-        EditText textInputEditText=popupView.findViewById(R.id.titreDocInput);
-        File file =new File(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString()+".txt");
+    public void Creer(View view) throws IOException {
+        EditText textInputEditText = popupWindow.getContentView().findViewById(R.id.titreDocInput);
+        textInputEditText.requestFocus();
+        System.out.println(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString()+".txt");
+        File file = new File(this.getFilesDir().getAbsolutePath()+"/note/"+textInputEditText.getText().toString()+".txt");
         if(file.createNewFile()){
             System.out.println("ça marche ");
-        }else{System.out.println("marche pas");}
-        Intent intent=new Intent(this,EditNote.class);
-        intent.putExtra("note",new Note(file));
+        } else {
+            System.out.println("marche pas");
+        }
+        Intent intent = new Intent(this, EditNote.class);
+        intent.putExtra("note", new Note(file));
         startActivity(intent);
     }
+
+
+
     @SuppressLint("NotifyDataSetChanged")
     public void supprimerNote(ArrayList<Note> notes){
         for (Note note:notes ){
